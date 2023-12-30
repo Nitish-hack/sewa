@@ -12,6 +12,7 @@ const filterOptions = [
 ];
 
 export default function App() {
+  const [admin,setAdmin]=useState(false);
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [userName, setUserName] = useState("");
@@ -39,11 +40,20 @@ export default function App() {
     makeApiCall(userName, page, PER_PAGE);
   }, [page, userName,selectedFilter]);
 
+  useEffect(() => {
+		const sewaString = localStorage.getItem('sewa');
+		const sewa = sewaString ? JSON.parse(sewaString) : null;
+    //  console.log(sewa);
+		if (sewa && sewa.admin===true) {
+		  setAdmin(true); // Convert the string to boolean
+		}
+	  }, []);
+
   return (
     <div className="container mt-5">
       <div className="flex" style={{alignItems:"center",justifyContent:"space-between"}}>
       <h1 className="mb-4">Users List</h1>
-      <AddUserModal users={users} setUsers={setUsers} />
+      {admin && <AddUserModal users={users} setUsers={setUsers} /> }
       </div>
      
    
@@ -100,7 +110,7 @@ export default function App() {
             <th>Set ID</th>
             <th>Charger ID</th>
             <th>Earphone</th>
-            <th>Action</th>
+           {admin && <th>Action</th> }
           </tr>
         </thead>
         <tbody>
@@ -110,7 +120,7 @@ export default function App() {
               <td style={{background:"none"}}>{user.setid === "0000" ? "NA" : user.setid}</td>
               <td style={{background:"none"}}>{user.chargerid === "0000" ? "NA" : user.chargerid}</td>
               <td style={{background:"none"}}>{user.earphone ? "Yes" : "No"}</td>
-              <td style={{background:"none"}}><ReturnModal users={users} setUsers={setUsers} user={user} /></td>
+             {admin && <td style={{background:"none"}}><ReturnModal users={users} setUsers={setUsers} user={user} /></td> }
 
             </tr>
           ))}
